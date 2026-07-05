@@ -1,0 +1,1 @@
+from app.scraper.job_scraper import JobScraper

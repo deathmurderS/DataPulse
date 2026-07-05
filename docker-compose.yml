@@ -1,0 +1,94 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: datapulse-db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-datapulse}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
+      POSTGRES_DB: ${POSTGRES_DB:-datapulse}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-datapulse} -d ${POSTGRES_DB:-datapulse}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - datapulse-network
+    restart: unless-stopped
+
+  api:
+    build: .
+    container_name: datapulse-api
+    command: uvicorn app.api.main:app --host 0.0.0.0 --port 8000 --reload
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - datapulse-network
+    restart: unless-stopped
+
+  dashboard:
+    build: .
+    container_name: datapulse-dashboard
+    command: streamlit run app/dashboard/main.py --server.port 8501 --server.address 0.0.0.0
+    ports:
+      - "8501:8501"
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    depends_on:
+      - api
+    networks:
+      - datapulse-network
+    restart: unless-stopped
+
+  scheduler:
+    build: .
+    container_name: datapulse-scheduler
+    command: python -m app.scheduler.main
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - datapulse-network
+    restart: unless-stopped
+
+  backup:
+    build: .
+    container_name: datapulse-backup
+    command: python -m app.scripts.backup
+    volumes:
+      - .:/app
+      - backup_data:/app/data/backup
+    env_file:
+      - .env
+    depends_on:
+      - db
+    networks:
+      - datapulse-network
+    restart: unless-stopped
+
+networks:
+  datapulse-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  backup_data:

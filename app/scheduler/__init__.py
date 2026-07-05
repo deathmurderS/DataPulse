@@ -1,0 +1,1 @@
+from app.scheduler.main import run_scheduler
