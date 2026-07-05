@@ -34,7 +34,7 @@ class Settings(BaseSettings):
     dashboard_port: int = 8501
 
     # Scraper
-    scraper_interval_hours: int = 24
+    scraper_interval_hours: int = 1
     scraper_timeout: int = 30
     scraper_user_agent: str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
 
