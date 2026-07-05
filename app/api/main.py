@@ -7,9 +7,11 @@ Provides endpoints for job data access, search, filtering, and export.
 from contextlib import asynccontextmanager
 from typing import Optional, List
 from datetime import date, datetime
+from pathlib import Path
 from fastapi import FastAPI, Depends, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import Response
+from fastapi.responses import Response, FileResponse
+from fastapi.staticfiles import StaticFiles
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func, and_
 from sqlalchemy.orm import selectinload
@@ -386,3 +388,22 @@ async def get_job(
         raise HTTPException(status_code=404, detail="Job not found")
 
     return job.to_dict()
+
+
+# ===== Frontend Static Files (SPA) =====
+
+FRONTEND_DIR = Path(__file__).parent.parent.parent / "frontend" / "dist"
+
+if FRONTEND_DIR.exists():
+    logger.info(f"Serving frontend from {FRONTEND_DIR}")
+    app.mount("/assets", StaticFiles(directory=str(FRONTEND_DIR / "assets")), name="assets")
+
+    @app.get("/{full_path:path}", include_in_schema=False)
+    async def serve_frontend(full_path: str):
+        """Serve frontend SPA - all non-API routes return index.html."""
+        file_path = FRONTEND_DIR / full_path
+        if file_path.exists() and file_path.is_file():
+            return FileResponse(str(file_path))
+        return FileResponse(str(FRONTEND_DIR / "index.html"))
+else:
+    logger.warning(f"Frontend dist not found at {FRONTEND_DIR}. Run 'cd frontend && npm run build' to build it.")

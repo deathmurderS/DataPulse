@@ -1,8 +1,8 @@
-FROM python:3.11-slim
+FROM python:3.11-slim AS backend
 
 WORKDIR /app
 
-# Install system dependencies
+# Install system dependencies for Python
 RUN apt-get update && apt-get install -y \
     gcc \
     libpq-dev \
@@ -18,8 +18,24 @@ COPY . .
 # Create necessary directories
 RUN mkdir -p /app/data/backup /app/data/sample
 
-# Expose ports
-EXPOSE 8000 8501
+# ===== Frontend Build Stage =====
+FROM node:20-slim AS frontend-builder
 
-# Default command (override in docker-compose)
+WORKDIR /frontend
+COPY frontend/package.json frontend/package-lock.json* ./
+RUN npm install
+
+COPY frontend/ .
+RUN npm run build
+
+# ===== Final Stage =====
+FROM backend
+
+# Copy built frontend from frontend-builder
+COPY --from=frontend-builder /frontend/dist /app/frontend/dist
+
+# Expose port
+EXPOSE 8000
+
+# Default command
 CMD ["uvicorn", "app.api.main:app", "--host", "0.0.0.0", "--port", "8000"]
