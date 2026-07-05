@@ -6,34 +6,53 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['"IBM Plex Sans"', 'system-ui', 'sans-serif'],
+        mono: ['"IBM Plex Mono"', 'ui-monospace', 'monospace'],
+      },
       colors: {
-        primary: {
-          400: '#60a5fa',
-          500: '#3b82f6',
-          600: '#2563eb',
+        ink: {
+          950: '#0C0E10',
+          900: '#14171A',
+          850: '#191D20',
+          800: '#1D2124',
+          700: '#2A2F33',
         },
-        accent: {
-          400: '#34d399',
-          500: '#10b981',
-        }
+        paper: {
+          DEFAULT: '#EDEAE2',
+          dim: '#9BA0A6',
+          faint: '#5C6167',
+        },
+        pulse: {
+          DEFAULT: '#FFB020',
+          dim: '#7A5200',
+          soft: 'rgba(255,176,32,0.12)',
+        },
+        signal: {
+          teal: '#4FBDAE',
+          rose: '#E1637A',
+          slate: '#7C93B8',
+          olive: '#A9A15C',
+          plum: '#B084C4',
+        },
       },
       animation: {
-        'scan': 'scan 2s ease-in-out infinite',
-        'fade-in': 'fadeIn 0.5s ease-out',
-        'slide-up': 'slideUp 0.5s ease-out',
+        'fade-in': 'fadeIn 0.4s ease-out',
+        'slide-up': 'slideUp 0.4s ease-out',
+        'trace': 'trace 3.2s linear infinite',
       },
       keyframes: {
-        scan: {
-          '0%, 100%': { top: '0%' },
-          '50%': { top: '100%' },
-        },
         fadeIn: {
           '0%': { opacity: '0' },
           '100%': { opacity: '1' },
         },
         slideUp: {
-          '0%': { opacity: '0', transform: 'translateY(20px)' },
+          '0%': { opacity: '0', transform: 'translateY(10px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        trace: {
+          '0%': { strokeDashoffset: '240' },
+          '100%': { strokeDashoffset: '0' },
         },
       },
     },

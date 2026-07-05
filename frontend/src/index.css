@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -5,7 +7,7 @@
 @layer base {
   * {
     scrollbar-width: thin;
-    scrollbar-color: #4b5563 #1f2937;
+    scrollbar-color: #2A2F33 #14171A;
   }
 
   *::-webkit-scrollbar {
@@ -14,43 +16,43 @@
   }
 
   *::-webkit-scrollbar-track {
-    background: #1f2937;
+    background: #14171A;
   }
 
   *::-webkit-scrollbar-thumb {
-    background-color: #4b5563;
-    border-radius: 3px;
+    background-color: #2A2F33;
+    border-radius: 2px;
+  }
+
+  ::selection {
+    background: rgba(255, 176, 32, 0.25);
+    color: #EDEAE2;
+  }
+
+  :focus-visible {
+    outline: 1px solid #FFB020;
+    outline-offset: 2px;
   }
 }
 
 @layer components {
-  .card {
-    @apply bg-gray-900 border border-gray-800 rounded-xl p-4 sm:p-6;
+  .panel {
+    @apply bg-ink-900 border border-ink-800 rounded-md;
   }
 
-  .card-header {
-    @apply text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4;
+  .panel-header {
+    @apply font-mono text-[10px] uppercase tracking-[0.18em] text-paper-dim mb-4;
   }
 
-  .stat-value {
-    @apply text-2xl sm:text-3xl font-bold text-white;
+  .readout-value {
+    @apply font-mono text-2xl sm:text-3xl font-semibold text-paper tabular-nums;
   }
 
-  .stat-label {
-    @apply text-xs sm:text-sm text-gray-500;
+  .readout-label {
+    @apply font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.14em] text-paper-faint;
   }
 
-  .filter-active {
-    @apply inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-primary-500/20 text-primary-400 border border-primary-500/30;
+  .tag-pill {
+    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-sm text-[11px] font-mono border border-pulse-dim text-pulse bg-pulse-soft;
   }
-
-  .scan-line {
-    @apply absolute left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-primary-400 to-transparent opacity-50;
-    animation: scan 2s ease-in-out infinite;
-  }
-}
-
-@keyframes scan {
-  0%, 100% { top: 0%; }
-  50% { top: 100%; }
 }
