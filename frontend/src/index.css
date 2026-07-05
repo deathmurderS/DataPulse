@@ -1,58 +1,69 @@
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@300;400;500;700&family=Quicksand:wght@500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
+  body {
+    background-color: #fff8f3;
+    color: #3e3549;
+    font-family: 'M PLUS Rounded 1c', ui-rounded, system-ui, sans-serif;
+  }
+
   * {
     scrollbar-width: thin;
-    scrollbar-color: #2A2F33 #14171A;
+    scrollbar-color: #ffb8cb #fdf8ee;
   }
-
-  *::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-  }
-
-  *::-webkit-scrollbar-track {
-    background: #14171A;
-  }
-
-  *::-webkit-scrollbar-thumb {
-    background-color: #2A2F33;
-    border-radius: 2px;
-  }
-
-  ::selection {
-    background: rgba(255, 176, 32, 0.25);
-    color: #EDEAE2;
-  }
-
-  :focus-visible {
-    outline: 1px solid #FFB020;
-    outline-offset: 2px;
-  }
+  *::-webkit-scrollbar { width: 6px; height: 6px; }
+  *::-webkit-scrollbar-track { background: #fdf8ee; }
+  *::-webkit-scrollbar-thumb { background-color: #ffb8cb; border-radius: 6px; }
 }
 
 @layer components {
-  .panel {
-    @apply bg-ink-900 border border-ink-800 rounded-md;
+  .card {
+    @apply bg-white/80 backdrop-blur-sm border border-sakura-100 rounded-3xl p-5 sm:p-6 shadow-card;
   }
 
-  .panel-header {
-    @apply font-mono text-[10px] uppercase tracking-[0.18em] text-paper-dim mb-4;
+  .card-header {
+    @apply text-xs font-semibold text-sakura-400 uppercase tracking-widest mb-4;
   }
 
-  .readout-value {
-    @apply font-mono text-2xl sm:text-3xl font-semibold text-paper tabular-nums;
+  .stat-value {
+    @apply text-2xl sm:text-3xl font-bold text-mist-800;
+    font-family: 'Quicksand', ui-rounded, sans-serif;
   }
 
-  .readout-label {
-    @apply font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.14em] text-paper-faint;
+  .stat-label {
+    @apply text-xs sm:text-sm text-mist-700/70;
   }
 
-  .tag-pill {
-    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-sm text-[11px] font-mono border border-pulse-dim text-pulse bg-pulse-soft;
+  .btn-primary {
+    @apply inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-sakura-400 text-white text-sm font-semibold shadow-sakura hover:bg-sakura-500 transition-all;
+  }
+
+  .filter-active {
+    @apply inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-sakura-100 text-sakura-500 border border-sakura-200;
+  }
+
+  .petal {
+    position: fixed;
+    top: -20px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50% 0 50% 0;
+    background: linear-gradient(135deg, #ffb8cb, #fde8ef);
+    pointer-events: none;
+    z-index: 0;
+    animation: petalFall linear infinite;
   }
 }
+
+@keyframes petalFall {
+  0%   { transform: translateY(-20px) rotate(0deg) translateX(0); opacity: 0.7; }
+  50%  { transform: translateY(50vh) rotate(180deg) translateX(30px); opacity: 0.5; }
+  100% { transform: translateY(105vh) rotate(360deg) translateX(-10px); opacity: 0; }
+}
+
+@keyframes fadeIn { 0% { opacity: 0; } 100% { opacity: 1; } }
+@keyframes slideUp { 0% { opacity: 0; transform: translateY(16px); } 100% { opacity: 1; transform: translateY(0); } }
