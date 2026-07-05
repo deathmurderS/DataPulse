@@ -57,3 +57,7 @@ Thumbs.db
 .coverage
 htmlcov/
 .coverage.*
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
