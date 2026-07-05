@@ -112,9 +112,9 @@ async def health_check():
     }
 
 
-@app.get("/", tags=["System"])
-async def root():
-    """Root endpoint - API information."""
+@app.get("/api/info", tags=["System"])
+async def api_info():
+    """API information endpoint."""
     return {
         "name": "DataPulse API",
         "version": "1.0.0",
