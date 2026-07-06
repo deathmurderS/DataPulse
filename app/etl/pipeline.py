@@ -3,6 +3,7 @@ ETL Pipeline Module
 Extract, Transform, Load - handles cleaning, validation, and deduplication.
 """
 
+import math
 from typing import List, Dict, Tuple
 import pandas as pd
 from datetime import datetime
@@ -114,7 +115,19 @@ class ETLPipeline:
         if duplicates_removed > 0:
             logger.info(f"Removed {duplicates_removed} duplicate jobs")
 
-        return df_unique.to_dict("records"), duplicates_removed
+        # IMPORTANT: pandas silently turns missing values (None) into NaN
+        # once a column has a mix of numbers and Nones (e.g. salary_min is
+        # populated for some jobs but None for others, which is common with
+        # real scraped data). NaN/Infinity are not valid JSON. Note that
+        # df.where(pd.notnull(df), None) does NOT fix this: pandas coerces
+        # None back into NaN for float-dtype columns on assignment. The
+        # only reliable fix is to sanitize each value after to_dict().
+        records = df_unique.to_dict("records")
+        for record in records:
+            for key, value in record.items():
+                if isinstance(value, float) and (math.isnan(value) or math.isinf(value)):
+                    record[key] = None
+        return records, duplicates_removed
 
     def detect_anomalies(self, jobs: List[Dict]) -> List[Dict]:
         """Detect anomalies in the data (for notification purposes)."""

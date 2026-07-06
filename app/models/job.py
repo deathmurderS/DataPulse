@@ -33,6 +33,18 @@ class Job(Base):
     def __repr__(self):
         return f"<Job(id={self.id}, title='{self.title}', company='{self.company}')>"
 
+    @staticmethod
+    def _safe_float(value):
+        """Guard against NaN/Infinity, which are not valid JSON and would
+        crash serialization for any endpoint returning this record."""
+        if value is None:
+            return None
+        try:
+            value = float(value)
+        except (TypeError, ValueError):
+            return None
+        return value if value == value and value not in (float("inf"), float("-inf")) else None
+
     def to_dict(self):
         return {
             "id": self.id,
@@ -42,8 +54,8 @@ class Job(Base):
             "location": self.location,
             "description": self.description,
             "requirements": self.requirements,
-            "salary_min": self.salary_min,
-            "salary_max": self.salary_max,
+            "salary_min": self._safe_float(self.salary_min),
+            "salary_max": self._safe_float(self.salary_max),
             "salary_currency": self.salary_currency,
             "employment_type": self.employment_type,
             "category": self.category,

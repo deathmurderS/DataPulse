@@ -272,11 +272,19 @@ async def get_job_stats(db: AsyncSession = Depends(get_db)):
         and_(Job.category.isnot(None), Job.salary_min.isnot(None))
     ).group_by(Job.category).order_by(func.avg(Job.salary_max).desc())
     salary_result = await db.execute(salary_query)
+
+    def _safe_avg(value):
+        # Guards against NaN/Infinity, which are not valid JSON.
+        if not value:
+            return 0
+        value = float(value)
+        return value if value == value and value not in (float("inf"), float("-inf")) else 0
+
     avg_salary = [
         {
             "category": row[0],
-            "avg_salary_min": float(row[1]) if row[1] else 0,
-            "avg_salary_max": float(row[2]) if row[2] else 0,
+            "avg_salary_min": _safe_avg(row[1]),
+            "avg_salary_max": _safe_avg(row[2]),
             "count": row[3],
         }
         for row in salary_result
