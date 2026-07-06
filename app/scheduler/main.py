@@ -21,7 +21,7 @@ class DataPipelineScheduler:
 
     def __init__(self):
         self.scheduler = AsyncIOScheduler()
-        self.scraper = JobScraper(source_name="demo_source")
+        self.scraper = JobScraper(source_name="Remotive")
         self.etl = ETLPipeline()
         self.alerter = Alerter()
         self.pipeline_runs = 0
@@ -42,7 +42,7 @@ class DataPipelineScheduler:
             if not raw_jobs:
                 logger.warning("No jobs scraped, skipping ETL")
                 await self.alerter.send_scraping_failure_alert(
-                    source_name="demo_source",
+                    source_name="Remotive",
                     error="No data returned from scraper"
                 )
                 return
@@ -70,7 +70,7 @@ class DataPipelineScheduler:
         except Exception as e:
             logger.error(f"Pipeline run [{run_id}] failed: {e}")
             await self.alerter.send_scraping_failure_alert(
-                source_name="demo_source",
+                source_name="Remotive",
                 error=str(e)
             )
 
