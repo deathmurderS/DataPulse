@@ -1,0 +1,7 @@
+[project]
+name = "datapulse"
+version = "1.0.0"
+description = "DataPulse - Job vacancy data API and dashboard"
+
+[tool.vercel]
+entrypoint = "app.api.main:app"
