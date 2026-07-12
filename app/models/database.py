@@ -28,18 +28,32 @@ AsyncSessionLocal = async_sessionmaker(
     expire_on_commit=False,
 )
 
-# Sync engine for scripts, scheduler, and ETL
-sync_engine = create_engine(
-    settings.database_url_sync,
-    echo=False,
-    pool_size=5,
-    max_overflow=10,
-)
+# Sync engine for scripts, scheduler, and ETL (lazy-loaded)
+_sync_engine = None
+_SyncSessionLocal = None
 
-SyncSessionLocal = sessionmaker(
-    bind=sync_engine,
-    expire_on_commit=False,
-)
+
+def _get_sync_engine():
+    """Lazily create sync engine - avoids import errors when psycopg2 is not available."""
+    global _sync_engine
+    if _sync_engine is None:
+        _sync_engine = create_engine(
+            settings.database_url_sync,
+            echo=False,
+            pool_size=5,
+            max_overflow=10,
+        )
+    return _sync_engine
+
+
+def _get_sync_session_factory():
+    global _SyncSessionLocal
+    if _SyncSessionLocal is None:
+        _SyncSessionLocal = sessionmaker(
+            bind=_get_sync_engine(),
+            expire_on_commit=False,
+        )
+    return _SyncSessionLocal
 
 
 async def get_db() -> AsyncSession:
@@ -58,7 +72,7 @@ async def get_db() -> AsyncSession:
 
 def get_db_sync():
     """Provides sync DB session for ETL, scheduler, scripts."""
-    session = SyncSessionLocal()
+    session = _get_sync_session_factory()()
     try:
         yield session
         session.commit()

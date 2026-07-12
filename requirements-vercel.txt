@@ -1,0 +1,19 @@
+# DataPulse - Vercel Deployment Dependencies (slim)
+# Only includes packages needed by the FastAPI API
+
+# Web & Backend
+fastapi==0.111.0
+uvicorn[standard]==0.29.0
+python-multipart==0.0.9
+
+# Data validation & settings
+pydantic==2.7.1
+pydantic-settings==2.3.0
+
+# Database (async only - no psycopg2 which needs system libs)
+sqlalchemy==2.0.30
+asyncpg==0.29.0
+
+# Utilities
+python-dotenv==1.0.1
+loguru==0.7.2

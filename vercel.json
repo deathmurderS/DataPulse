@@ -1,0 +1,33 @@
+{
+  "buildCommand": null,
+  "installCommand": "pip install -r requirements-vercel.txt",
+  "framework": null,
+  "builds": [
+    {
+      "src": "app/api/main.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/docs",
+      "dest": "app/api/main.py"
+    },
+    {
+      "src": "/redoc",
+      "dest": "app/api/main.py"
+    },
+    {
+      "src": "/health",
+      "dest": "app/api/main.py"
+    },
+    {
+      "src": "/api/(.*)",
+      "dest": "app/api/main.py"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "app/api/main.py"
+    }
+  ]
+}
